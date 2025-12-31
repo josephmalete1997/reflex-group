@@ -30,7 +30,7 @@
                     </div>
                     <div class="plan-actions">
                         <a href="cart.php?add=<?php echo $plan['id']; ?>" class="cta-btn">Add to Cart</a>
-                        <a href="#" class="details-link">Details</a>
+                        <a href="plan_details.php?id=<?php echo $plan['id']; ?>" class="details-link">View Details</a>
                     </div>
                 </div>
             </div>
