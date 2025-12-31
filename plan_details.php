@@ -602,7 +602,7 @@ $discount = round((($current_plan['old_price'] - $current_plan['new_price']) / $
         color: #27ae60;
     }
 
-    /* Load More Button */
+    /* Load More Button-- */
     .load-more-btn {
         display: block;
         width: 100%;
