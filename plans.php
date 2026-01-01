@@ -26,16 +26,19 @@ $plans = [
             'Guest toilet'
         ],
         'gallery' => [
-            'plans/pl1-interior.png',
-            'plans/pl1-kitchen.png',
-            'plans/pl1-bedroom.png'
+            'plans/pl1.png',
+            'plans/pl1.png',
+            'plans/pl1.png',
+            'plans/pl1.png',
+            'plans/pl1.png',
+            'plans/pl1.png'
         ],
         'floor_plan' => 'plans/pl1-floor.png'
     ],
     [
         'id' => 'mlb0765d',
         'name' => '10 Bedroom House Plan MLB 076.5D',
-        'img' => 'images/demo-plan2.jpg',
+        'img' => 'plans/pl2.png',
         'desc' => '913m² • 10 bedrooms • 2 Levels • 2-car garage • 34m x 29m',
         'full_desc' => 'An impressive double-story mansion with 10 bedrooms spread across 913m² of luxurious living space. This grand design is perfect for large families or those who love to entertain. Features include multiple living areas, a gourmet kitchen, home cinema room, and expansive outdoor areas.',
         'old_price' => 22850,
@@ -69,7 +72,7 @@ $plans = [
     [
         'id' => 'mlb18187s',
         'name' => '5 Bedroom House Plan MLB 1818.7S',
-        'img' => 'images/demo-plan3.jpg',
+        'img' => 'plans/pl3.png',
         'desc' => '572m² • 5 bedrooms • 2 Levels • 2-car garage • 22.2m x 26.1m',
         'full_desc' => 'A beautifully designed double-story family home offering 572m² of well-planned living space. This 5 bedroom plan combines modern aesthetics with practical functionality, featuring an open-concept main floor, spacious bedrooms upstairs, and excellent indoor-outdoor flow.',
         'old_price' => 11425,
@@ -101,7 +104,7 @@ $plans = [
     [
         'id' => 'mlb0735d',
         'name' => '5 Bedroom House Plan MLB 073 5d',
-        'img' => 'images/demo-plan4.jpg',
+        'img' => 'plans/pl4.png',
         'desc' => '584m² • 5 bedrooms • 2 Levels • 2 garage • 23.17m x 16.85m',
         'full_desc' => 'This elegant 5 bedroom double-story house plan offers 584m² of sophisticated living. Designed with attention to detail, it features a compact footprint while maximizing interior space. Perfect for modern families who appreciate style and functionality.',
         'old_price' => 14600,
@@ -133,7 +136,7 @@ $plans = [
     [
         'id' => 'mob240914',
         'name' => '4 Bedroom House Plan MOB 2409.14',
-        'img' => 'images/demo-plan5.jpg',
+        'img' => 'plans/pl5.png',
         'desc' => '377.87m² • 4 bedrooms • 2 Levels • 2-car garage • 16m x 15.2m',
         'full_desc' => 'A compact yet spacious double-story home with 377.87m² of well-designed living space. This 4 bedroom plan is ideal for urban plots with limited space, offering all the amenities of a larger home in an efficient footprint.',
         'old_price' => 9446.75,
@@ -165,7 +168,7 @@ $plans = [
     [
         'id' => 'mob240913',
         'name' => '4 Bedroom House Plan MOB 2409-13',
-        'img' => 'images/demo-plan6.jpg',
+        'img' => 'plans/pl6.png',
         'desc' => '203m² • 4 bedrooms • 1 Level • 2-car garage • 20.5m x 13.7m',
         'full_desc' => 'An affordable and practical single-level 4 bedroom home with 203m² of living space. This budget-friendly design doesn\'t compromise on quality, offering a functional layout perfect for first-time homeowners or those seeking a comfortable, no-fuss family home.',
         'old_price' => 5075,

@@ -7,7 +7,7 @@
 body {
   margin: 0;
   padding: 0;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   background: linear-gradient(180deg, #f6f9fc 0%, #eef3fb 100%);
   color: #14213d;
   line-height: 1.6;
@@ -22,15 +22,11 @@ body {
   align-items: center;
   justify-content: space-between;
   box-sizing: border-box;
-  height: 88px;
 }
 .logo img {
   display: block;
   height: 200px;
   margin-left: 24px;
-  border-radius: 8px;
-  background: #fff;
-  box-shadow: 0 2px 8px rgba(20,60,111,0.08);
   transition: height 0.3s;
 }
 .menu ul {
@@ -50,11 +46,11 @@ body {
   text-decoration: none;
   font-size: 1.08em;
   padding: 10px 18px;
-  border-radius: 6px;
-  transition: background .18s, color .18s, transform .18s;
+  transition: background 0.18s, color 0.18s, transform 0.18s;
   position: relative;
 }
-.menu ul a:hover, .menu ul a.active {
+.menu ul a:hover,
+.menu ul a.active {
   background: #e7f0fd;
   color: #2375b2;
   transform: translateY(-1px);
@@ -64,9 +60,8 @@ body {
   outline-offset: 2px;
 }
 .cart-link {
-  font-weight: 700; position:relative;
-  background: #2473bf;
-  color: #fff !important;
+  font-weight: 700;
+  position: relative;
   margin-left: 9px;
 }
 .cart-icon {
@@ -75,21 +70,28 @@ body {
   margin-right: 3px;
 }
 .cart-count {
-  background: #fff;
-  color: #143c6f;
-  border-radius: 10px;
   padding: 1px 8px;
-  font-size: .98em;
+  font-size: 0.98em;
   margin-left: 1px;
   font-weight: 600;
-  box-shadow: 0 1px 4px #bcdefc;
 }
 
 /* Responsive fix for nav */
-@media(max-width: 900px) {
-  .container { flex-direction: column; height:auto; padding-bottom:12px; }
-  .logo img { margin-left: 0; height: 64px;}
-  .menu ul { flex-wrap: wrap; justify-content:center; margin-right:4px;}
+@media (max-width: 900px) {
+  .container {
+    flex-direction: column;
+    height: auto;
+    padding-bottom: 12px;
+  }
+  .logo img {
+    margin-left: 0;
+    height: 64px;
+  }
+  .menu ul {
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-right: 4px;
+  }
 }
 
 /* Footer Flex Layout */
@@ -103,14 +105,12 @@ body {
   background: #143c6f;
   color: #fff;
   padding: 30px 0 20px 0;
-  border-radius: 24px 24px 0 0;
 }
 .logo-footer img {
   height: 64px;
-  border-radius: 12px;
   margin-bottom: 8px;
   background: #fff;
-  box-shadow: 0 2px 8px rgba(20,60,111,0.08);
+  box-shadow: 0 2px 8px rgba(20, 60, 111, 0.08);
 }
 .footer-about {
   max-width: 340px;
@@ -121,21 +121,60 @@ body {
   flex-direction: row;
   gap: 48px;
 }
-.footer-col h5 { font-size: 1.11em; margin: 8px 0 10px 0; color: #7fc6ff; }
-.footer-col ul { padding: 0; margin: 0; list-style: none; }
-.footer-col li { margin-bottom: 9px; font-size: 0.99em; }
-.footer-col li a { color: #f5fafd; text-decoration: none; transition: color .15s; }
-.footer-col li a:hover { color: #c8e9ff; }
-.copyright { text-align: center; background: #153d6b; padding: 14px 0 5px 0; font-size: 1.03em; color: #d1e4fd; border-radius: 0 0 24px 24px;}
-
-@media(max-width: 900px) {
-  .footer-flexcontainer { flex-direction: column; align-items: stretch; gap: 22px; }
-  .footer-about { margin-left: 0; text-align: center; }
-  .footer-cols { flex-direction: column; align-items: center; gap: 20px; }
+.footer-col h5 {
+  font-size: 1.11em;
+  margin: 8px 0 10px 0;
+  color: #7fc6ff;
 }
-@media(max-width: 700px) {
-  .footer-flexcontainer { padding: 18px 1vw 6px 1vw; }
-  .footer-about, .footer-col { text-align: center; }
+.footer-col ul {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+.footer-col li {
+  margin-bottom: 9px;
+  font-size: 0.99em;
+}
+.footer-col li a {
+  color: #f5fafd;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.footer-col li a:hover {
+  color: #c8e9ff;
+}
+.copyright {
+  text-align: center;
+  background: #153d6b;
+  padding: 14px 0 5px 0;
+  font-size: 1.03em;
+  color: #d1e4fd;
+}
+
+@media (max-width: 900px) {
+  .footer-flexcontainer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 22px;
+  }
+  .footer-about {
+    margin-left: 0;
+    text-align: center;
+  }
+  .footer-cols {
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+}
+@media (max-width: 700px) {
+  .footer-flexcontainer {
+    padding: 18px 1vw 6px 1vw;
+  }
+  .footer-about,
+  .footer-col {
+    text-align: center;
+  }
 }
 
 /* Rest of your previous styles for hero/banner/products etc below this line */
@@ -145,7 +184,6 @@ body {
   color: #fff;
   padding: 88px 0 54px 0;
   text-align: center;
-  border-radius: 0 0 42px 42px;
   width: 100vw;
   margin-left: calc(-50vw + 50%);
 }
@@ -170,20 +208,20 @@ body {
   padding: 14px 36px;
   background: #fff;
   color: #143c6f;
-  border-radius: 6px;
   font-weight: 700;
   font-size: 1rem;
   text-decoration: none;
-  box-shadow: 0 4px 12px rgba(20,60,111,0.07);
+  box-shadow: 0 4px 12px rgba(20, 60, 111, 0.07);
   border: none;
   cursor: pointer;
   transition: background 0.3s, color 0.3s, transform 0.2s, box-shadow 0.3s;
 }
-.cta-btn:hover, .cta-btn.secondary:hover {
+.cta-btn:hover,
+.cta-btn.secondary:hover {
   background: #143c6f;
   color: #fff;
   transform: translateY(-2px);
-  box-shadow: 0 10px 22px rgba(20,60,111,0.15);
+  box-shadow: 0 10px 22px rgba(20, 60, 111, 0.15);
 }
 .cta-btn:focus-visible {
   outline: 3px solid rgba(255, 255, 255, 0.6);
@@ -203,7 +241,7 @@ body {
   padding: 54px 0 24px 0;
 }
 .plans-title {
-  text-align:center;
+  text-align: center;
   font-size: 2.7rem;
   color: #143c6f;
   margin-bottom: 38px;
@@ -219,21 +257,20 @@ body {
 }
 .plan-card {
   background: #fff;
-  border-radius: 17px;
-  box-shadow: 0 4px 26px rgba(20,60,111,0.09);
+  box-shadow: 0 4px 26px rgba(20, 60, 111, 0.09);
   width: 30%;
   padding: 0 0 1.2em 0;
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  transition: transform 0.16s, box-shadow .18s, border-color .18s;
+  transition: transform 0.16s, box-shadow 0.18s, border-color 0.18s;
   overflow: hidden;
   border: 1.5px solid #e2e9fb;
 }
 .plan-card:hover,
 .plan-card:focus-within {
   transform: translateY(-9px) scale(1.022);
-  box-shadow: 0 15px 40px rgba(35,85,190,0.13);
+  box-shadow: 0 15px 40px rgba(35, 85, 190, 0.13);
   border-color: #cfe0ff;
 }
 .plan-img img {
@@ -241,8 +278,6 @@ body {
   height: 196px;
   object-fit: cover;
   display: block;
-  border-top-left-radius: 16px;
-  border-top-right-radius: 16px;
   background: #c8d4ed;
   transition: transform 0.3s ease;
 }
@@ -252,9 +287,9 @@ body {
 }
 .plan-info {
   padding: 21px 24px 0 24px;
-  flex:1;
+  flex: 1;
   display: flex;
-  flex-direction:column;
+  flex-direction: column;
 }
 .plan-info h3 {
   color: #143c6f;
@@ -286,7 +321,7 @@ body {
   margin-top: 12px;
 }
 .details-link {
-  font-size: .97em;
+  font-size: 0.97em;
   color: #1e5e7a;
   margin-left: 13px;
   text-decoration: underline;
@@ -302,19 +337,51 @@ body {
   outline-offset: 2px;
   text-decoration: none;
 }
-@media(max-width: 1000px) {
-  .container { flex-direction: column; height:auto; }
-  .logo img { height:64px; }
-  .plans-grid { max-width: 98vw; }
-  .plan-card { width: 96vw; max-width: 400px;}
-  .menu ul { flex-wrap: wrap; justify-content:center; margin-right:4px;}
+@media (max-width: 1000px) {
+  .container {
+    flex-direction: column;
+    height: auto;
+  }
+  .logo img {
+    height: 64px;
+  }
+  .plans-grid {
+    max-width: 98vw;
+  }
+  .plan-card {
+    width: 96vw;
+    max-width: 400px;
+  }
+  .menu ul {
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-right: 4px;
+  }
 }
-@media(max-width: 700px) {
-  .plans-grid { flex-direction: column; gap: 22px;}
-  .plans-section, .hero-section { padding: 24px 0; }
-  .hero-content h1 { font-size: 2rem; }
+@media (max-width: 700px) {
+  .plans-grid {
+    flex-direction: column;
+    gap: 22px;
+  }
+  .plans-section,
+  .hero-section {
+    padding: 24px 0;
+  }
+  .hero-content h1 {
+    font-size: 2rem;
+  }
 }
 
 /* Info/Card Sections & Footer (unchanged from previous style) */
-.info-section { background: #fff; padding: 48px 0; margin-bottom: 32px; border-radius: 18px; box-shadow: 0 1px 6px rgba(20,60,111,0.045); }
-.info-section h2 { color: #143c6f; font-size: 2rem; font-weight: 700; margin-bottom: 18px; }
+.info-section {
+  background: #fff;
+  padding: 48px 0;
+  margin-bottom: 32px;
+  box-shadow: 0 1px 6px rgba(20, 60, 111, 0.045);
+}
+.info-section h2 {
+  color: #143c6f;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 18px;
+}

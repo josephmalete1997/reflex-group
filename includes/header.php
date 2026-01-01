@@ -20,11 +20,10 @@ $cartCount = isset($_SESSION['cart']) ? count($_SESSION['cart']) : 0;
         </div>
         <div class="menu">
             <ul>
-                <li><a href="index.php"><i class="fa-solid fa-house"></i> Home</a></li>
-                <li><a href="about.php"><i class="fa-solid fa-building"></i> Architecture</a></li>
-                <li><a href="services.php"><i class="fa-solid fa-gears"></i> Engineering</a></li>
-                <li><a href="contact.php"><i class="fa-solid fa-helmet-safety"></i> Construction</a></li>
-                <li><a href="contact.php"><i class="fa-solid fa-envelope"></i> Contact</a></li>
+                <li><a href="index.php"></i> Home</a></li>
+                <li><a href="about.php"></i> Architecture | Engineering | Construction</a></li>
+                <li><a href="services.php"> Services</a></li>
+                <li><a href="contact.php"> Contact</a></li>
                 <li><a href="cart.php" class="cart-link"><i class="fa-solid fa-cart-shopping cart-icon"></i> <span class="cart-count"><?php echo $cartCount; ?></span></a></li>
             </ul>
         </div>

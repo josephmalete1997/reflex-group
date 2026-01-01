@@ -2,416 +2,306 @@
 include 'includes/header.php';
 include 'plans.php';
 
-// Get plan ID from URL (now handles string IDs)
 $plan_id = isset($_GET['id']) ? $_GET['id'] : '';
-
-// Find the plan using helper function
 $current_plan = getPlanById($plans, $plan_id);
 
-// Redirect if plan not found
 if (!$current_plan) {
     header('Location: index.php');
     exit;
 }
 
-// Calculate discount percentage
 $discount = round((($current_plan['old_price'] - $current_plan['new_price']) / $current_plan['old_price']) * 100);
 ?>
 
-<main>
-    <!-- Breadcrumb Navigation -->
-    <section class="breadcrumb-section container">
+<main class="page">
+    <!-- Breadcrumb -->
+    <section class="container">
         <nav class="breadcrumb">
             <a href="index.php">Home</a>
-            <span class="separator"><i class="fa-solid fa-chevron-right"></i></span>
+            <span class="sep"><i class="fa-solid fa-chevron-right"></i></span>
             <a href="index.php#plans">Building Plans</a>
-            <span class="separator"><i class="fa-solid fa-chevron-right"></i></span>
+            <span class="sep"><i class="fa-solid fa-chevron-right"></i></span>
             <span class="current"><?php echo htmlspecialchars($current_plan['name']); ?></span>
         </nav>
     </section>
 
-    <!-- Plan Details Section -->
-    <section class="plan-details-section container">
-        <div class="plan-details-grid">
-            <!-- Image Gallery -->
-            <div class="plan-gallery">
-                <div class="main-image">
-                    <img src="<?php echo $current_plan['img']; ?>" alt="<?php echo htmlspecialchars($current_plan['name']); ?>" id="mainImage">
+    <!-- Main -->
+    <section class="container plan-page">
+        <div class="plan-layout">
+            <!-- Gallery -->
+            <aside class="card gallery-card">
+                <div class="gallery-main">
+                    <img
+                        src="<?php echo $current_plan['img']; ?>"
+                        alt="<?php echo htmlspecialchars($current_plan['name']); ?>"
+                        id="mainImage"
+                        loading="eager"
+                    />
                     <?php if ($discount > 0): ?>
-                        <span class="discount-badge">-<?php echo $discount; ?>% OFF</span>
+                        <span class="badge badge-discount">-<?php echo $discount; ?>% OFF</span>
                     <?php endif; ?>
                 </div>
+
                 <?php if (isset($current_plan['gallery']) && is_array($current_plan['gallery'])): ?>
-                    <div class="thumbnail-gallery">
-                        <div class="thumbnail active" onclick="changeImage('<?php echo $current_plan['img']; ?>', this)">
-                            <img src="<?php echo $current_plan['img']; ?>" alt="Main view">
-                        </div>
+                    <div class="gallery-thumbs" role="list">
+                        <button class="thumb active" type="button"
+                            onclick="changeImage('<?php echo $current_plan['img']; ?>', this)">
+                            <img src="<?php echo $current_plan['img']; ?>" alt="Main view" loading="lazy">
+                        </button>
+
                         <?php foreach ($current_plan['gallery'] as $image): ?>
-                            <div class="thumbnail" onclick="changeImage('<?php echo $image; ?>', this)">
-                                <img src="<?php echo $image; ?>" alt="Gallery image">
-                            </div>
+                            <button class="thumb" type="button"
+                                onclick="changeImage('<?php echo $image; ?>', this)">
+                                <img src="<?php echo $image; ?>" alt="Gallery image" loading="lazy">
+                            </button>
                         <?php endforeach; ?>
                     </div>
                 <?php endif; ?>
-            </div>
+            </aside>
 
-            <!-- Plan Information -->
-            <div class="plan-info-details">
-                <span class="plan-sku">SKU: <?php echo strtoupper($current_plan['id']); ?></span>
-                <h1 class="plan-title"><?php echo htmlspecialchars($current_plan['name']); ?></h1>
+            <!-- Details -->
+            <section class="card details-card">
+                <div class="details-top">
+                    <span class="sku">SKU: <?php echo strtoupper($current_plan['id']); ?></span>
+                    <h1 class="title"><?php echo htmlspecialchars($current_plan['name']); ?></h1>
 
-                <div class="plan-rating">
-                    <div class="stars">
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star-half-stroke"></i>
+                    <div class="price-row">
+                        <div class="price">
+                            <span class="old">R<?php echo number_format($current_plan['old_price'], 2); ?></span>
+                            <span class="new">R<?php echo number_format($current_plan['new_price'], 2); ?></span>
+                        </div>
+
+                        <?php if ($discount > 0): ?>
+                            <div class="save">
+                                You save <strong>R<?php echo number_format($current_plan['old_price'] - $current_plan['new_price'], 2); ?></strong>
+                                <span>(<?php echo $discount; ?>%)</span>
+                            </div>
+                        <?php endif; ?>
                     </div>
-                    <span class="rating-text">(4.5 / 5 based on 24 reviews)</span>
+
+                    <div class="summary">
+                        <?php echo $current_plan['desc']; ?>
+                    </div>
+
+                    <div class="cta-row">
+                        <a href="cart.php?add=<?php echo $current_plan['id']; ?>" class="btn btn-primary">
+                            <i class="fa-solid fa-cart-plus"></i> Add to Cart
+                        </a>
+                        <a href="checkout.php?buy=<?php echo $current_plan['id']; ?>" class="btn btn-dark">
+                            <i class="fa-solid fa-bolt"></i> Buy Now
+                        </a>
+                        <button class="btn btn-ghost wishlist-btn" onclick="addToWishlist('<?php echo $current_plan['id']; ?>')">
+                            <i class="fa-regular fa-heart"></i>
+                        </button>
+                    </div>
+
+                    <div class="trust">
+                        <div class="trust-item"><i class="fa-solid fa-shield-halved"></i><span>Secure Payment</span></div>
+                        <div class="trust-item"><i class="fa-solid fa-download"></i><span>Instant Download</span></div>
+                        <div class="trust-item"><i class="fa-solid fa-headset"></i><span>24/7 Support</span></div>
+                    </div>
                 </div>
 
-                <div class="plan-pricing-details">
-                    <span class="old-price">R<?php echo number_format($current_plan['old_price'], 2); ?></span>
-                    <span class="new-price">R<?php echo number_format($current_plan['new_price'], 2); ?></span>
-                    <?php if ($discount > 0): ?>
-                        <span class="savings">You save R<?php echo number_format($current_plan['old_price'] - $current_plan['new_price'], 2); ?> (<?php echo $discount; ?>%)</span>
-                    <?php endif; ?>
-                </div>
+                <div class="divider"></div>
 
-                <div class="plan-quick-specs">
-                    <p><?php echo $current_plan['desc']; ?></p>
-                </div>
-
-                <div class="plan-description">
-                    <h3>Description</h3>
-                    <p><?php echo isset($current_plan['full_desc']) ? $current_plan['full_desc'] : $current_plan['desc']; ?></p>
-                </div>
-
-                <!-- Plan Specifications -->
-                <div class="plan-specifications">
-                    <h3>Specifications</h3>
-                    <div class="specs-grid">
-                        <div class="spec-item">
+                <!-- Specs -->
+                <div class="block">
+                    <h3 class="block-title">Specifications</h3>
+                    <div class="spec-grid">
+                        <div class="spec">
                             <i class="fa-solid fa-bed"></i>
-                            <span class="spec-label">Bedrooms</span>
-                            <span class="spec-value"><?php echo $current_plan['bedrooms']; ?></span>
+                            <div>
+                                <div class="label">Bedrooms</div>
+                                <div class="value"><?php echo $current_plan['bedrooms']; ?></div>
+                            </div>
                         </div>
 
-                        <div class="spec-item">
+                        <div class="spec">
                             <i class="fa-solid fa-bath"></i>
-                            <span class="spec-label">Bathrooms</span>
-                            <span class="spec-value"><?php echo $current_plan['bathrooms']; ?></span>
+                            <div>
+                                <div class="label">Bathrooms</div>
+                                <div class="value"><?php echo $current_plan['bathrooms']; ?></div>
+                            </div>
                         </div>
 
-                        <div class="spec-item">
+                        <div class="spec">
                             <i class="fa-solid fa-car"></i>
-                            <span class="spec-label">Garage</span>
-                            <span class="spec-value"><?php echo $current_plan['garage']; ?> Car</span>
+                            <div>
+                                <div class="label">Garage</div>
+                                <div class="value"><?php echo $current_plan['garage']; ?> Car</div>
+                            </div>
                         </div>
 
-                        <div class="spec-item">
+                        <div class="spec">
                             <i class="fa-solid fa-ruler-combined"></i>
-                            <span class="spec-label">Floor Area</span>
-                            <span class="spec-value"><?php echo $current_plan['sqm']; ?> m²</span>
+                            <div>
+                                <div class="label">Floor Area</div>
+                                <div class="value"><?php echo $current_plan['sqm']; ?> m²</div>
+                            </div>
                         </div>
 
-                        <div class="spec-item">
+                        <div class="spec">
                             <i class="fa-solid fa-building"></i>
-                            <span class="spec-label">Stories</span>
-                            <span class="spec-value"><?php echo $current_plan['stories']; ?></span>
+                            <div>
+                                <div class="label">Stories</div>
+                                <div class="value"><?php echo $current_plan['stories']; ?></div>
+                            </div>
                         </div>
 
-                        <div class="spec-item">
+                        <div class="spec">
                             <i class="fa-solid fa-arrows-left-right-to-line"></i>
-                            <span class="spec-label">Dimensions</span>
-                            <span class="spec-value"><?php echo $current_plan['dimensions']; ?></span>
+                            <div>
+                                <div class="label">Dimensions</div>
+                                <div class="value"><?php echo $current_plan['dimensions']; ?></div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Features -->
                 <?php if (isset($current_plan['features']) && is_array($current_plan['features'])): ?>
-                    <div class="plan-features">
-                        <h3>Key Features</h3>
-                        <ul class="features-list">
+                    <div class="block">
+                        <h3 class="block-title">Key Features</h3>
+                        <ul class="feature-list">
                             <?php foreach ($current_plan['features'] as $feature): ?>
                                 <li><i class="fa-solid fa-check-circle"></i> <?php echo htmlspecialchars($feature); ?></li>
                             <?php endforeach; ?>
                         </ul>
                     </div>
                 <?php endif; ?>
+            </section>
+        </div>
+    </section>
 
-                <!-- Actions -->
-                <div class="plan-actions-details">
-                    <div class="action-buttons">
-                        <a href="cart.php?add=<?php echo $current_plan['id']; ?>" class="cta-btn add-to-cart">
-                            <i class="fa-solid fa-cart-plus"></i> Add to Cart
-                        </a>
-                        <a href="checkout.php?buy=<?php echo $current_plan['id']; ?>" class="cta-btn buy-now">
-                            <i class="fa-solid fa-bolt"></i> Buy Now
-                        </a>
-                        <button class="wishlist-btn" onclick="addToWishlist('<?php echo $current_plan['id']; ?>')">
-                            <i class="fa-regular fa-heart"></i>
-                        </button>
+    <!-- Tabs -->
+    <section class="container">
+        <div class="card tabs-card">
+            <div class="tabs-header" role="tablist">
+                <button class="tab-btn active" onclick="openTab(event, 'description')" role="tab">Full Description</button>
+                <button class="tab-btn" onclick="openTab(event, 'floor-plan')" role="tab">Floor Plan</button>
+                <button class="tab-btn" onclick="openTab(event, 'whats-included')" role="tab">What's Included</button>
+            </div>
+
+            <div class="tabs-body">
+                <div id="description" class="tab-content active">
+                    <h3>Detailed Description</h3>
+                    <p><?php echo isset($current_plan['full_desc']) ? $current_plan['full_desc'] : $current_plan['desc']; ?></p>
+
+                    <h4 class="subhead">Plan Highlights</h4>
+                    <div class="highlights">
+                        <div class="highlight">
+                            <i class="fa-solid fa-home"></i>
+                            <div>
+                                <div class="label">Style</div>
+                                <div class="value"><?php echo $current_plan['style']; ?></div>
+                            </div>
+                        </div>
+                        <div class="highlight">
+                            <i class="fa-solid fa-ruler"></i>
+                            <div>
+                                <div class="label">Total Area</div>
+                                <div class="value"><?php echo $current_plan['sqm']; ?> m²</div>
+                            </div>
+                        </div>
+                        <div class="highlight">
+                            <i class="fa-solid fa-layer-group"></i>
+                            <div>
+                                <div class="label">Levels</div>
+                                <div class="value"><?php echo $current_plan['stories']; ?> <?php echo $current_plan['stories'] > 1 ? 'Levels' : 'Level'; ?></div>
+                            </div>
+                        </div>
+                        <div class="highlight">
+                            <i class="fa-solid fa-expand"></i>
+                            <div>
+                                <div class="label">Plot Size</div>
+                                <div class="value"><?php echo $current_plan['dimensions']; ?></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Trust Badges -->
-                <div class="trust-badges">
-                    <div class="badge">
-                        <i class="fa-solid fa-shield-halved"></i>
-                        <span>Secure Payment</span>
+                <div id="floor-plan" class="tab-content">
+                    <h3>Floor Plan Layout</h3>
+
+                    <div class="floor-wrap">
+                        <?php if (isset($current_plan['floor_plan'])): ?>
+                            <img
+                                src="<?php echo $current_plan['floor_plan']; ?>"
+                                alt="Floor Plan for <?php echo htmlspecialchars($current_plan['name']); ?>"
+                                class="floor-img"
+                                loading="lazy"
+                            >
+                        <?php else: ?>
+                            <div class="floor-placeholder">
+                                <i class="fa-solid fa-drafting-compass"></i>
+                                <p>Floor plan image included with purchase</p>
+                            </div>
+                        <?php endif; ?>
                     </div>
-                    <div class="badge">
-                        <i class="fa-solid fa-download"></i>
-                        <span>Instant Download</span>
+
+                    <div class="note">
+                        <i class="fa-solid fa-info-circle"></i>
+                        <p>Detailed architectural floor plans with measurements are included in your purchase. Plans can be customized to suit your specific requirements.</p>
                     </div>
-                    <div class="badge">
-                        <i class="fa-solid fa-headset"></i>
-                        <span>24/7 Support</span>
+                </div>
+
+                <div id="whats-included" class="tab-content">
+                    <h3>What's Included in Your Purchase</h3>
+
+                    <div class="included-grid">
+                        <div class="included">
+                            <i class="fa-solid fa-file-pdf"></i>
+                            <h4>PDF Plans</h4>
+                            <p>Complete architectural drawings in high-resolution PDF format</p>
+                        </div>
+                        <div class="included">
+                            <i class="fa-solid fa-compass-drafting"></i>
+                            <h4>CAD Files</h4>
+                            <p>Editable AutoCAD DWG files for customization</p>
+                        </div>
+                        <div class="included">
+                            <i class="fa-solid fa-list-check"></i>
+                            <h4>Bill of Quantities</h4>
+                            <p>Detailed material list for accurate cost estimation</p>
+                        </div>
+                        <div class="included">
+                            <i class="fa-solid fa-cube"></i>
+                            <h4>3D Renders</h4>
+                            <p>High-quality 3D visualization images</p>
+                        </div>
+                        <div class="included">
+                            <i class="fa-solid fa-plug"></i>
+                            <h4>Electrical Layout</h4>
+                            <p>Complete electrical plan with outlet positions</p>
+                        </div>
+                        <div class="included">
+                            <i class="fa-solid fa-faucet-drip"></i>
+                            <h4>Plumbing Layout</h4>
+                            <p>Plumbing plan showing all connections</p>
+                        </div>
+                        <div class="included">
+                            <i class="fa-solid fa-window-maximize"></i>
+                            <h4>Window & Door Schedule</h4>
+                            <p>Detailed specifications for all openings</p>
+                        </div>
+                        <div class="included">
+                            <i class="fa-solid fa-headset"></i>
+                            <h4>Support</h4>
+                            <p>Email support for any questions about your plan</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Tabs Section -->
-    <section class="plan-tabs-section container">
-        <div class="tabs-header">
-            <button class="tab-btn active" onclick="openTab(event, 'description')">Full Description</button>
-            <button class="tab-btn" onclick="openTab(event, 'floor-plan')">Floor Plan</button>
-            <button class="tab-btn" onclick="openTab(event, 'whats-included')">What's Included</button>
-            <button class="tab-btn" onclick="openTab(event, 'reviews')">Reviews (24)</button>
-        </div>
-
-        <div id="description" class="tab-content active">
-            <h3>Detailed Description</h3>
-            <p><?php echo isset($current_plan['full_desc']) ? $current_plan['full_desc'] : $current_plan['desc']; ?></p>
-
-            <h4>Plan Highlights</h4>
-            <div class="highlights-grid">
-                <div class="highlight-item">
-                    <i class="fa-solid fa-home"></i>
-                    <div>
-                        <h5>Style</h5>
-                        <p><?php echo $current_plan['style']; ?></p>
-                    </div>
-                </div>
-                <div class="highlight-item">
-                    <i class="fa-solid fa-ruler"></i>
-                    <div>
-                        <h5>Total Area</h5>
-                        <p><?php echo $current_plan['sqm']; ?> m²</p>
-                    </div>
-                </div>
-                <div class="highlight-item">
-                    <i class="fa-solid fa-layer-group"></i>
-                    <div>
-                        <h5>Levels</h5>
-                        <p><?php echo $current_plan['stories']; ?> <?php echo $current_plan['stories'] > 1 ? 'Levels' : 'Level'; ?></p>
-                    </div>
-                </div>
-                <div class="highlight-item">
-                    <i class="fa-solid fa-expand"></i>
-                    <div>
-                        <h5>Plot Size</h5>
-                        <p><?php echo $current_plan['dimensions']; ?></p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="floor-plan" class="tab-content">
-            <h3>Floor Plan Layout</h3>
-            <div class="floor-plan-container">
-                <?php if (isset($current_plan['floor_plan'])): ?>
-                    <img src="<?php echo $current_plan['floor_plan']; ?>" alt="Floor Plan for <?php echo htmlspecialchars($current_plan['name']); ?>" class="floor-plan-image">
-                <?php else: ?>
-                    <div class="floor-plan-placeholder">
-                        <i class="fa-solid fa-drafting-compass"></i>
-                        <p>Floor plan image included with purchase</p>
-                    </div>
-                <?php endif; ?>
-            </div>
-            <div class="floor-plan-note">
-                <i class="fa-solid fa-info-circle"></i>
-                <p>Detailed architectural floor plans with measurements are included in your purchase. Plans can be customized to suit your specific requirements.</p>
-            </div>
-        </div>
-
-        <div id="whats-included" class="tab-content">
-            <h3>What's Included in Your Purchase</h3>
-            <div class="included-grid">
-                <div class="included-item">
-                    <i class="fa-solid fa-file-pdf"></i>
-                    <h4>PDF Plans</h4>
-                    <p>Complete architectural drawings in high-resolution PDF format</p>
-                </div>
-                <div class="included-item">
-                    <i class="fa-solid fa-compass-drafting"></i>
-                    <h4>CAD Files</h4>
-                    <p>Editable AutoCAD DWG files for customization</p>
-                </div>
-                <div class="included-item">
-                    <i class="fa-solid fa-list-check"></i>
-                    <h4>Bill of Quantities</h4>
-                    <p>Detailed material list for accurate cost estimation</p>
-                </div>
-                <div class="included-item">
-                    <i class="fa-solid fa-cube"></i>
-                    <h4>3D Renders</h4>
-                    <p>High-quality 3D visualization images</p>
-                </div>
-                <div class="included-item">
-                    <i class="fa-solid fa-plug"></i>
-                    <h4>Electrical Layout</h4>
-                    <p>Complete electrical plan with outlet positions</p>
-                </div>
-                <div class="included-item">
-                    <i class="fa-solid fa-faucet-drip"></i>
-                    <h4>Plumbing Layout</h4>
-                    <p>Plumbing plan showing all connections</p>
-                </div>
-                <div class="included-item">
-                    <i class="fa-solid fa-window-maximize"></i>
-                    <h4>Window & Door Schedule</h4>
-                    <p>Detailed specifications for all openings</p>
-                </div>
-                <div class="included-item">
-                    <i class="fa-solid fa-headset"></i>
-                    <h4>Support</h4>
-                    <p>Email support for any questions about your plan</p>
-                </div>
-            </div>
-        </div>
-
-        <div id="reviews" class="tab-content">
-            <h3>Customer Reviews</h3>
-            <div class="reviews-summary">
-                <div class="overall-rating">
-                    <span class="rating-number">4.5</span>
-                    <div class="stars">
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star-half-stroke"></i>
-                    </div>
-                    <span class="review-count">Based on 24 reviews</span>
-                </div>
-                <div class="rating-bars">
-                    <div class="rating-bar">
-                        <span>5 stars</span>
-                        <div class="bar">
-                            <div class="fill" style="width: 70%"></div>
-                        </div>
-                        <span>17</span>
-                    </div>
-                    <div class="rating-bar">
-                        <span>4 stars</span>
-                        <div class="bar">
-                            <div class="fill" style="width: 20%"></div>
-                        </div>
-                        <span>5</span>
-                    </div>
-                    <div class="rating-bar">
-                        <span>3 stars</span>
-                        <div class="bar">
-                            <div class="fill" style="width: 8%"></div>
-                        </div>
-                        <span>2</span>
-                    </div>
-                    <div class="rating-bar">
-                        <span>2 stars</span>
-                        <div class="bar">
-                            <div class="fill" style="width: 0%"></div>
-                        </div>
-                        <span>0</span>
-                    </div>
-                    <div class="rating-bar">
-                        <span>1 star</span>
-                        <div class="bar">
-                            <div class="fill" style="width: 0%"></div>
-                        </div>
-                        <span>0</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="reviews-list">
-                <div class="review-item">
-                    <div class="review-header">
-                        <div class="reviewer-info">
-                            <div class="reviewer-avatar">JM</div>
-                            <div>
-                                <span class="reviewer-name">John Mokoena</span>
-                                <span class="verified-badge"><i class="fa-solid fa-circle-check"></i> Verified Purchase</span>
-                            </div>
-                        </div>
-                        <div class="review-rating">
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                        </div>
-                    </div>
-                    <p class="review-text">Excellent plan! Very detailed and easy to understand. The architect made some minor adjustments for us at no extra cost. Highly recommended!</p>
-                    <span class="review-date"><i class="fa-regular fa-calendar"></i> 2 weeks ago</span>
-                </div>
-
-                <div class="review-item">
-                    <div class="review-header">
-                        <div class="reviewer-info">
-                            <div class="reviewer-avatar">SK</div>
-                            <div>
-                                <span class="reviewer-name">Sarah Khumalo</span>
-                                <span class="verified-badge"><i class="fa-solid fa-circle-check"></i> Verified Purchase</span>
-                            </div>
-                        </div>
-                        <div class="review-rating">
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-regular fa-star"></i>
-                        </div>
-                    </div>
-                    <p class="review-text">Great value for money. The CAD files were very helpful for our builder. Would definitely recommend Reflex Perspectives to anyone looking for quality house plans.</p>
-                    <span class="review-date"><i class="fa-regular fa-calendar"></i> 1 month ago</span>
-                </div>
-
-                <div class="review-item">
-                    <div class="review-header">
-                        <div class="reviewer-info">
-                            <div class="reviewer-avatar">TN</div>
-                            <div>
-                                <span class="reviewer-name">Thabo Ndlovu</span>
-                                <span class="verified-badge"><i class="fa-solid fa-circle-check"></i> Verified Purchase</span>
-                            </div>
-                        </div>
-                        <div class="review-rating">
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                        </div>
-                    </div>
-                    <p class="review-text">Building our dream home was made so much easier with these plans. Everything was clearly laid out and the support team answered all our questions promptly.</p>
-                    <span class="review-date"><i class="fa-regular fa-calendar"></i> 2 months ago</span>
-                </div>
-            </div>
-
-            <button class="load-more-btn">Load More Reviews</button>
-        </div>
-    </section>
-
-    <!-- Related Plans -->
-    <section class="related-plans-section">
+    <!-- Related -->
+    <section class="related">
         <div class="container">
-            <h2>You May Also Like</h2>
+            <div class="related-head">
+                <h2>You May Also Like</h2>
+            </div>
+
             <div class="plans-grid">
                 <?php
                 $related = getRelatedPlans($plans, $plan_id, 4);
@@ -419,7 +309,7 @@ $discount = round((($current_plan['old_price'] - $current_plan['new_price']) / $
                 ?>
                     <div class="plan-card">
                         <div class="plan-img">
-                            <img src="<?php echo $plan['img']; ?>" alt="<?php echo htmlspecialchars($plan['name']); ?>">
+                            <img src="<?php echo $plan['img']; ?>" alt="<?php echo htmlspecialchars($plan['name']); ?>" loading="lazy">
                         </div>
                         <div class="plan-info">
                             <h3><?php echo $plan['name']; ?></h3>
@@ -429,7 +319,7 @@ $discount = round((($current_plan['old_price'] - $current_plan['new_price']) / $
                                 <span class="plan-new">R<?php echo number_format($plan['new_price'], 2); ?></span>
                             </div>
                             <div class="plan-actions">
-                                <a href="details.php?id=<?php echo $plan['id']; ?>" class="cta-btn">View Details</a>
+                                <a href="plan_details.php?id=<?php echo $plan['id']; ?>" class="cta-btn">View Details</a>
                             </div>
                         </div>
                     </div>
@@ -440,14 +330,12 @@ $discount = round((($current_plan['old_price'] - $current_plan['new_price']) / $
 </main>
 
 <script>
-    // Image gallery functionality
-    function changeImage(src, element) {
+    function changeImage(src, el) {
         document.getElementById('mainImage').src = src;
-        document.querySelectorAll('.thumbnail').forEach(thumb => thumb.classList.remove('active'));
-        element.classList.add('active');
+        document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+        el.classList.add('active');
     }
 
-    // Tab functionality
     function openTab(evt, tabName) {
         document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
         document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -455,179 +343,390 @@ $discount = round((($current_plan['old_price'] - $current_plan['new_price']) / $
         evt.currentTarget.classList.add('active');
     }
 
-    // Wishlist functionality
     function addToWishlist(planId) {
         const btn = event.currentTarget;
         const icon = btn.querySelector('i');
         icon.classList.toggle('fa-regular');
         icon.classList.toggle('fa-solid');
-        btn.classList.toggle('active');
+        btn.classList.toggle('is-active');
     }
 </script>
+
 <style>
-    /* SKU */
-    .plan-sku {
-        display: inline-block;
-        background: #e9ecef;
-        padding: 5px 12px;
-        border-radius: 4px;
+    :root{
+        --bg: #0b0f14;
+        --card: #0f1621;
+        --card2: #0c121b;
+        --text: #e9eef5;
+        --muted: rgba(233,238,245,.72);
+        --line: rgba(233,238,245,.10);
+        --brand: #0d6efd;
+        --brand2: #22c55e;
+        --shadow: 0 10px 30px rgba(0,0,0,.35);
+        --r: 16px;
+    }
+
+    .page{ background: transparent; }
+
+    .container{
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 0 16px;
+    }
+
+    /* Breadcrumb */
+    .breadcrumb{
+        display:flex;
+        align-items:center;
+        gap:10px;
+        flex-wrap:wrap;
+        padding: 18px 0 6px;
+        color: var(--muted);
+        font-size: 13px;
+    }
+    .breadcrumb a{ color: var(--muted); text-decoration:none; }
+    .breadcrumb a:hover{ color: var(--text); }
+    .breadcrumb .sep{ opacity:.6; font-size: 11px; }
+    .breadcrumb .current{ color: var(--text); font-weight: 600; }
+
+    /* Layout */
+    .plan-page{ padding: 16px 0 18px; }
+    .plan-layout{
+        display:grid;
+        grid-template-columns: 1.05fr .95fr;
+        gap: 18px;
+        align-items:start;
+    }
+
+    .card{
+        background: #ffffff;
+        border: 1px solid #e9ecef;
+        border-radius: var(--r);
+        box-shadow: 0 10px 24px rgba(0,0,0,.06);
+        overflow:hidden;
+    }
+
+    /* Gallery */
+    .gallery-card{ padding: 14px; }
+    .gallery-main{
+        position:relative;
+        border-radius: 14px;
+        overflow:hidden;
+        border: 1px solid #e9ecef;
+        background: #f8f9fa;
+    }
+    .gallery-main img{
+        width:100%;
+        height: 420px;
+        object-fit: cover;
+        display:block;
+    }
+    .badge{
+        position:absolute;
+        top: 12px;
+        left: 12px;
+        padding: 8px 10px;
+        border-radius: 999px;
         font-size: 12px;
-        color: #666;
-        margin-bottom: 10px;
+        font-weight: 800;
+        letter-spacing:.3px;
+        color:#fff;
+        background: rgba(13,110,253,.95);
+        box-shadow: 0 10px 20px rgba(13,110,253,.25);
+    }
+    .badge-discount{ background: rgba(220,53,69,.95); box-shadow: 0 10px 20px rgba(220,53,69,.22); }
+
+    .gallery-thumbs{
+        display:grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 12px;
+    }
+    .thumb{
+        border: 1px solid #e9ecef;
+        border-radius: 12px;
+        padding: 0;
+        background: #fff;
+        cursor:pointer;
+        overflow:hidden;
+        transition: transform .12s ease, border-color .12s ease, box-shadow .12s ease;
+    }
+    .thumb img{ width:100%; height: 78px; object-fit: cover; display:block; }
+    .thumb:hover{ transform: translateY(-2px); box-shadow: 0 10px 18px rgba(0,0,0,.08); }
+    .thumb.active{ border-color: rgba(13,110,253,.55); box-shadow: 0 0 0 3px rgba(13,110,253,.15); }
+
+    /* Details */
+    .details-card{ padding: 18px; }
+    .sku{
+        display:inline-flex;
+        padding: 6px 12px;
+        background: #f1f3f5;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing:.3px;
+        color: #495057;
+    }
+    .title{
+        margin: 10px 0 10px;
+        font-size: 30px;
+        line-height: 1.15;
     }
 
-    /* Quick Specs */
-    .plan-quick-specs {
+    .price-row{ display:flex; gap: 14px; align-items: flex-end; flex-wrap: wrap; }
+    .price{
+        display:flex;
+        align-items: baseline;
+        gap: 10px;
+    }
+    .price .old{
+        color:#868e96;
+        text-decoration: line-through;
+        font-weight: 700;
+    }
+    .price .new{
+        font-size: 26px;
+        font-weight: 900;
+        color:#111827;
+    }
+    .save{
+        font-size: 13px;
+        color:#0f5132;
+        background: #d1e7dd;
+        border: 1px solid #badbcc;
+        padding: 8px 10px;
+        border-radius: 12px;
+    }
+
+    .summary{
+        margin: 14px 0 16px;
+        padding: 14px;
         background: #f8f9fa;
-        padding: 15px;
-        border-radius: 8px;
-        margin-bottom: 20px;
-        border-left: 4px solid #007bff;
+        border: 1px solid #e9ecef;
+        border-radius: 14px;
+        color:#343a40;
     }
 
-    /* Highlights Grid */
-    .highlights-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 20px;
-        margin-top: 20px;
+    /* Buttons */
+    .cta-row{
+        display:flex;
+        gap: 10px;
+        align-items:center;
+        flex-wrap: wrap;
+        margin: 6px 0 14px;
+    }
+    .btn{
+        display:inline-flex;
+        align-items:center;
+        justify-content:center;
+        gap: 10px;
+        padding: 12px 14px;
+        border-radius: 12px;
+        border: 1px solid transparent;
+        text-decoration:none;
+        font-weight: 800;
+        cursor:pointer;
+        transition: transform .12s ease, box-shadow .12s ease, background .12s ease, border-color .12s ease;
+        min-height: 44px;
+    }
+    .btn-primary{
+        background: #0d6efd;
+        color:#fff;
+        box-shadow: 0 10px 18px rgba(13,110,253,.20);
+    }
+    .btn-primary:hover{ transform: translateY(-1px); box-shadow: 0 14px 22px rgba(13,110,253,.24); }
+    .btn-dark{
+        background:#111827;
+        color:#fff;
+        box-shadow: 0 10px 18px rgba(17,24,39,.18);
+    }
+    .btn-dark:hover{ transform: translateY(-1px); box-shadow: 0 14px 22px rgba(17,24,39,.22); }
+    .btn-ghost{
+        background:#fff;
+        border-color:#e9ecef;
+        color:#111827;
+        width: 46px;
+        padding: 0;
+    }
+    .wishlist-btn.is-active{ border-color: rgba(220,53,69,.45); color:#dc3545; }
+    .wishlist-btn.is-active i{ color:#dc3545; }
+
+    /* Trust */
+    .trust{
+        display:grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 10px;
+    }
+    .trust-item{
+        display:flex;
+        gap: 10px;
+        align-items:center;
+        padding: 10px 12px;
+        border: 1px solid #e9ecef;
+        border-radius: 12px;
+        background: #fff;
+        font-size: 13px;
+        color:#343a40;
+    }
+    .trust-item i{ color:#0d6efd; }
+
+    .divider{
+        height: 1px;
+        background: #e9ecef;
+        margin: 16px 0;
     }
 
-    .highlight-item {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        padding: 15px;
-        background: #f8f9fa;
-        border-radius: 8px;
-    }
+    .block{ margin-top: 10px; }
+    .block-title{ margin: 0 0 10px; font-size: 16px; }
 
-    .highlight-item i {
-        font-size: 24px;
-        color: #007bff;
+    .spec-grid{
+        display:grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
     }
-
-    .highlight-item h5 {
-        margin: 0 0 5px 0;
-        font-size: 14px;
-        color: #666;
+    .spec{
+        display:flex;
+        gap: 10px;
+        padding: 12px;
+        border: 1px solid #e9ecef;
+        border-radius: 14px;
+        background: #fff;
     }
+    .spec i{ color:#0d6efd; margin-top: 2px; }
+    .label{ font-size: 12px; color:#6c757d; font-weight: 800; text-transform: uppercase; letter-spacing:.5px; }
+    .value{ font-weight: 900; color:#111827; }
 
-    .highlight-item p {
+    .feature-list{
+        list-style:none;
+        padding:0;
         margin: 0;
-        font-weight: 600;
+        display:grid;
+        gap: 10px;
     }
-
-    /* Floor Plan */
-    .floor-plan-container {
-        text-align: center;
-        margin: 20px 0;
+    .feature-list li{
+        display:flex;
+        gap: 10px;
+        align-items:flex-start;
+        padding: 10px 12px;
+        border: 1px solid #e9ecef;
+        border-radius: 14px;
+        background: #fff;
+        color:#343a40;
     }
+    .feature-list i{ color:#22c55e; margin-top: 2px; }
 
-    .floor-plan-image {
+    /* Tabs */
+    .tabs-card{ margin-top: 18px; }
+    .tabs-header{
+        display:flex;
+        gap: 8px;
+        padding: 12px;
+        border-bottom: 1px solid #e9ecef;
+        background: #fbfcfe;
+        overflow:auto;
+    }
+    .tab-btn{
+        border: 1px solid #e9ecef;
+        background:#fff;
+        color:#495057;
+        padding: 10px 12px;
+        border-radius: 999px;
+        font-weight: 900;
+        cursor:pointer;
+        white-space: nowrap;
+        transition: background .12s ease, border-color .12s ease, transform .12s ease;
+    }
+    .tab-btn:hover{ transform: translateY(-1px); }
+    .tab-btn.active{
+        background: rgba(13,110,253,.10);
+        border-color: rgba(13,110,253,.35);
+        color:#0d6efd;
+    }
+    .tabs-body{ padding: 16px; }
+    .tab-content{ display:none; }
+    .tab-content.active{ display:block; }
+    .subhead{ margin-top: 14px; }
+
+    .highlights{
+        display:grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 10px;
+    }
+    .highlight{
+        display:flex;
+        gap: 10px;
+        padding: 12px;
+        border: 1px solid #e9ecef;
+        border-radius: 14px;
+        background:#fff;
+    }
+    .highlight i{ color:#0d6efd; margin-top: 2px; }
+
+    /* Floor */
+    .floor-wrap{ margin-top: 10px; text-align:center; }
+    .floor-img{
         max-width: 100%;
-        border-radius: 8px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        border-radius: 14px;
+        border: 1px solid #e9ecef;
+        box-shadow: 0 10px 24px rgba(0,0,0,.07);
     }
-
-    .floor-plan-placeholder {
-        padding: 60px;
-        background: #f8f9fa;
-        border-radius: 8px;
-        text-align: center;
+    .floor-placeholder{
+        padding: 52px 16px;
+        border-radius: 14px;
+        border: 1px dashed #ced4da;
+        background:#f8f9fa;
+        color:#6c757d;
     }
+    .floor-placeholder i{ font-size: 54px; color:#adb5bd; margin-bottom: 10px; }
 
-    .floor-plan-placeholder i {
-        font-size: 60px;
-        color: #ccc;
-        margin-bottom: 15px;
-    }
-
-    .floor-plan-note {
-        display: flex;
-        align-items: flex-start;
+    .note{
+        display:flex;
         gap: 10px;
-        padding: 15px;
-        background: #e7f3ff;
-        border-radius: 8px;
-        margin-top: 20px;
+        margin-top: 12px;
+        padding: 12px;
+        border-radius: 14px;
+        background:#e7f3ff;
+        border: 1px solid #cfe2ff;
+        color:#084298;
     }
+    .note i{ color:#0d6efd; margin-top: 2px; }
 
-    .floor-plan-note i {
-        color: #007bff;
+    /* Included */
+    .included-grid{
+        margin-top: 12px;
+        display:grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
     }
-
-    /* Rating Bars */
-    .rating-bars {
-        flex: 1;
+    .included{
+        padding: 14px;
+        border-radius: 16px;
+        border: 1px solid #e9ecef;
+        background:#fff;
+        box-shadow: 0 10px 20px rgba(0,0,0,.05);
     }
+    .included i{ color:#0d6efd; font-size: 22px; }
+    .included h4{ margin: 10px 0 6px; font-size: 14px; }
+    .included p{ margin: 0; color:#6c757d; font-size: 13px; line-height: 1.45; }
 
-    .rating-bar {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-bottom: 8px;
+    /* Related */
+    .related{ padding: 22px 0 40px; }
+    .related-head{ display:flex; align-items:center; justify-content:space-between; padding: 0 0 10px; }
+
+    /* Responsive */
+    @media (max-width: 1024px){
+        .plan-layout{ grid-template-columns: 1fr; }
+        .gallery-main img{ height: 360px; }
+        .included-grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
-
-    .rating-bar .bar {
-        flex: 1;
-        height: 8px;
-        background: #e9ecef;
-        border-radius: 4px;
-        overflow: hidden;
-    }
-
-    .rating-bar .fill {
-        height: 100%;
-        background: #f1c40f;
-        border-radius: 4px;
-    }
-
-    /* Reviewer Avatar */
-    .reviewer-avatar {
-        width: 45px;
-        height: 45px;
-        background: #007bff;
-        color: white;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: bold;
-    }
-
-    .verified-badge {
-        display: block;
-        font-size: 12px;
-        color: #27ae60;
-    }
-
-    /* Load More Button-- */
-    .load-more-btn {
-        display: block;
-        width: 100%;
-        padding: 15px;
-        background: #f8f9fa;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        cursor: pointer;
-        font-size: 16px;
-        margin-top: 20px;
-        transition: all 0.3s;
-    }
-
-    .load-more-btn:hover {
-        background: #e9ecef;
-    }
-
-    /* Wishlist Active */
-    .wishlist-btn.active {
-        color: #e74c3c;
-        border-color: #e74c3c;
-    }
-
-    .wishlist-btn.active i {
-        color: #e74c3c;
+    @media (max-width: 560px){
+        .gallery-thumbs{ grid-template-columns: repeat(4, minmax(0, 1fr)); }
+        .thumb img{ height: 66px; }
+        .spec-grid, .highlights{ grid-template-columns: 1fr; }
+        .trust{ grid-template-columns: 1fr; }
+        .title{ font-size: 24px; }
     }
 </style>
 
