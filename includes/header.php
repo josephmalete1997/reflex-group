@@ -20,12 +20,22 @@ $cartCount = isset($_SESSION['cart']) ? count($_SESSION['cart']) : 0;
         </div>
         <div class="menu">
             <ul>
-                <li><a href="index.php"></i> Home</a></li>
-                <li><a href="about.php"></i> Architecture | Engineering | Construction</a></li>
-                <li><a href="services.php"> Services</a></li>
-                <li><a href="contact.php"> Contact</a></li>
+                <li><a href="index.php">Home</a></li>
+                <li><a href="about.php">Architecture | Engineering | Construction</a></li>
+                <li><a href="services.php">Services</a></li>
+                <li><a href="contact.php">Contact</a></li>
                 <li><a href="cart.php" class="cart-link"><i class="fa-solid fa-cart-shopping cart-icon"></i> <span class="cart-count"><?php echo $cartCount; ?></span></a></li>
             </ul>
         </div>
     </div>
 </header>
+<script>
+window.addEventListener('scroll', function() {
+    const header = document.querySelector('header');
+    if (window.scrollY > 50) {
+        header.classList.add('scrolled');
+    } else {
+        header.classList.remove('scrolled');
+    }
+});
+</script>

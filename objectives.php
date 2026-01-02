@@ -1,7 +1,7 @@
 <?php include 'includes/header.php'; ?>
 <main>
 <section class="info-section">
-  <h2><i class="fa-solid fa-list-check"></i> Our Objectives</h2>
+  <h2>Our Objectives</h2>
   <ol>
     <li>Deliver Quality Services: Consistently provide high-quality products/services across all divisions.</li>
     <li>Enhance Customer Satisfaction: Maintain a customer satisfaction rate of over 90%.</li>
@@ -16,7 +16,7 @@
   </ol>
 </section>
 <section class="info-section">
-  <h2><i class="fa-solid fa-gem"></i> Core Values</h2>
+  <h2>Core Values</h2>
   <ul class="bullet-check">
     <li>Superior Customer Experience</li>
     <li>Quality Assurance and Excellence</li>
