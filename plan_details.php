@@ -1,16 +1,59 @@
 <?php
-include 'includes/header.php';
-include 'plans.php';
+declare(strict_types=1);
 
-$plan_id = isset($_GET['id']) ? $_GET['id'] : '';
-$current_plan = getPlanById($plans, $plan_id);
+include 'includes/header.php';
+require_once 'backend/config/db.php';
+
+$plan_id = isset($_GET['id']) ? trim((string)$_GET['id']) : '';
+if ($plan_id === '') {
+    header('Location: index.php');
+    exit;
+}
+
+/* 1) Fetch plan */
+$stmt = $pdo->prepare("SELECT * FROM plans WHERE id = :id LIMIT 1");
+$stmt->execute([':id' => $plan_id]);
+$current_plan = $stmt->fetch();
 
 if (!$current_plan) {
     header('Location: index.php');
     exit;
 }
 
-$discount = round((($current_plan['old_price'] - $current_plan['new_price']) / $current_plan['old_price']) * 100);
+/* Map DB fields to your existing template keys */
+$current_plan['desc'] = $current_plan['short_desc'];
+$current_plan['full_desc'] = $current_plan['full_desc'] ?? $current_plan['short_desc'];
+
+/* 2) Fetch features */
+$f = $pdo->prepare("SELECT feature FROM plan_features WHERE plan_id = :id ORDER BY id ASC");
+$f->execute([':id' => $plan_id]);
+$current_plan['features'] = array_map(fn($r) => $r['feature'], $f->fetchAll());
+
+/* 3) Fetch gallery */
+$g = $pdo->prepare("SELECT image FROM plan_gallery WHERE plan_id = :id ORDER BY id ASC");
+$g->execute([':id' => $plan_id]);
+$current_plan['gallery'] = array_map(fn($r) => $r['image'], $g->fetchAll());
+
+/* 4) Related plans (same style OR same bedrooms) */
+$r = $pdo->prepare("
+    SELECT id, name, img, short_desc, old_price, new_price
+    FROM plans
+    WHERE id <> :id
+      AND (style = :style OR bedrooms = :bedrooms)
+    ORDER BY created_at DESC
+    LIMIT 4
+");
+$r->execute([
+    ':id' => $plan_id,
+    ':style' => $current_plan['style'],
+    ':bedrooms' => (int)$current_plan['bedrooms'],
+]);
+$related = $r->fetchAll();
+
+/* 5) Discount (avoid division by zero) */
+$old = (float)$current_plan['old_price'];
+$new = (float)$current_plan['new_price'];
+$discount = ($old > 0 && $new < $old) ? (int)round((($old - $new) / $old) * 100) : 0;
 ?>
 
 <main class="page">
@@ -32,7 +75,7 @@ $discount = round((($current_plan['old_price'] - $current_plan['new_price']) / $
             <aside class="card gallery-card">
                 <div class="gallery-main">
                     <img
-                        src="<?php echo $current_plan['img']; ?>"
+                        src="<?php echo htmlspecialchars($current_plan['img']); ?>"
                         alt="<?php echo htmlspecialchars($current_plan['name']); ?>"
                         id="mainImage"
                         loading="eager"
@@ -42,17 +85,17 @@ $discount = round((($current_plan['old_price'] - $current_plan['new_price']) / $
                     <?php endif; ?>
                 </div>
 
-                <?php if (isset($current_plan['gallery']) && is_array($current_plan['gallery'])): ?>
+                <?php if (!empty($current_plan['gallery'])): ?>
                     <div class="gallery-thumbs" role="list">
                         <button class="thumb active" type="button"
-                            onclick="changeImage('<?php echo $current_plan['img']; ?>', this)">
-                            <img src="<?php echo $current_plan['img']; ?>" alt="Main view" loading="lazy">
+                            onclick="changeImage('<?php echo htmlspecialchars($current_plan['img']); ?>', this)">
+                            <img src="<?php echo htmlspecialchars($current_plan['img']); ?>" alt="Main view" loading="lazy">
                         </button>
 
                         <?php foreach ($current_plan['gallery'] as $image): ?>
                             <button class="thumb" type="button"
-                                onclick="changeImage('<?php echo $image; ?>', this)">
-                                <img src="<?php echo $image; ?>" alt="Gallery image" loading="lazy">
+                                onclick="changeImage('<?php echo htmlspecialchars($image); ?>', this)">
+                                <img src="<?php echo htmlspecialchars($image); ?>" alt="Gallery image" loading="lazy">
                             </button>
                         <?php endforeach; ?>
                     </div>
@@ -62,35 +105,37 @@ $discount = round((($current_plan['old_price'] - $current_plan['new_price']) / $
             <!-- Details -->
             <section class="card details-card">
                 <div class="details-top">
-                    <span class="sku">SKU: <?php echo strtoupper($current_plan['id']); ?></span>
+                    <span class="sku">SKU: <?php echo strtoupper(htmlspecialchars($current_plan['id'])); ?></span>
                     <h1 class="title"><?php echo htmlspecialchars($current_plan['name']); ?></h1>
 
                     <div class="price-row">
                         <div class="price">
-                            <span class="old">R<?php echo number_format($current_plan['old_price'], 2); ?></span>
-                            <span class="new">R<?php echo number_format($current_plan['new_price'], 2); ?></span>
+                            <?php if ($old > 0): ?>
+                                <span class="old">R<?php echo number_format($old, 2); ?></span>
+                            <?php endif; ?>
+                            <span class="new">R<?php echo number_format($new, 2); ?></span>
                         </div>
 
                         <?php if ($discount > 0): ?>
                             <div class="save">
-                                You save <strong>R<?php echo number_format($current_plan['old_price'] - $current_plan['new_price'], 2); ?></strong>
+                                You save <strong>R<?php echo number_format($old - $new, 2); ?></strong>
                                 <span>(<?php echo $discount; ?>%)</span>
                             </div>
                         <?php endif; ?>
                     </div>
 
                     <div class="summary">
-                        <?php echo $current_plan['desc']; ?>
+                        <?php echo htmlspecialchars((string)$current_plan['desc']); ?>
                     </div>
 
                     <div class="cta-row">
-                        <a href="cart.php?add=<?php echo $current_plan['id']; ?>" class="btn btn-primary">
+                        <a href="backend/api/cart.php?action=add&id=<?php echo urlencode($current_plan['id']); ?>" class="btn btn-primary">
                             <i class="fa-solid fa-cart-plus"></i> Add to Cart
                         </a>
-                        <a href="checkout.php?buy=<?php echo $current_plan['id']; ?>" class="btn btn-dark">
+                        <a href="checkout.php?buy=<?php echo urlencode($current_plan['id']); ?>" class="btn btn-dark">
                             <i class="fa-solid fa-bolt"></i> Buy Now
                         </a>
-                        <button class="btn btn-ghost wishlist-btn" onclick="addToWishlist('<?php echo $current_plan['id']; ?>')">
+                        <button class="btn btn-ghost wishlist-btn" onclick="addToWishlist('<?php echo htmlspecialchars($current_plan['id']); ?>')">
                             <i class="fa-regular fa-heart"></i>
                         </button>
                     </div>
@@ -112,7 +157,7 @@ $discount = round((($current_plan['old_price'] - $current_plan['new_price']) / $
                             <i class="fa-solid fa-bed"></i>
                             <div>
                                 <div class="label">Bedrooms</div>
-                                <div class="value"><?php echo $current_plan['bedrooms']; ?></div>
+                                <div class="value"><?php echo (int)$current_plan['bedrooms']; ?></div>
                             </div>
                         </div>
 
@@ -120,7 +165,7 @@ $discount = round((($current_plan['old_price'] - $current_plan['new_price']) / $
                             <i class="fa-solid fa-bath"></i>
                             <div>
                                 <div class="label">Bathrooms</div>
-                                <div class="value"><?php echo $current_plan['bathrooms']; ?></div>
+                                <div class="value"><?php echo (int)$current_plan['bathrooms']; ?></div>
                             </div>
                         </div>
 
@@ -128,7 +173,7 @@ $discount = round((($current_plan['old_price'] - $current_plan['new_price']) / $
                             <i class="fa-solid fa-car"></i>
                             <div>
                                 <div class="label">Garage</div>
-                                <div class="value"><?php echo $current_plan['garage']; ?> Car</div>
+                                <div class="value"><?php echo (int)$current_plan['garage']; ?> Car</div>
                             </div>
                         </div>
 
@@ -136,7 +181,7 @@ $discount = round((($current_plan['old_price'] - $current_plan['new_price']) / $
                             <i class="fa-solid fa-ruler-combined"></i>
                             <div>
                                 <div class="label">Floor Area</div>
-                                <div class="value"><?php echo $current_plan['sqm']; ?> m²</div>
+                                <div class="value"><?php echo htmlspecialchars((string)$current_plan['sqm']); ?> m²</div>
                             </div>
                         </div>
 
@@ -144,7 +189,7 @@ $discount = round((($current_plan['old_price'] - $current_plan['new_price']) / $
                             <i class="fa-solid fa-building"></i>
                             <div>
                                 <div class="label">Stories</div>
-                                <div class="value"><?php echo $current_plan['stories']; ?></div>
+                                <div class="value"><?php echo (int)$current_plan['stories']; ?></div>
                             </div>
                         </div>
 
@@ -152,14 +197,14 @@ $discount = round((($current_plan['old_price'] - $current_plan['new_price']) / $
                             <i class="fa-solid fa-arrows-left-right-to-line"></i>
                             <div>
                                 <div class="label">Dimensions</div>
-                                <div class="value"><?php echo $current_plan['dimensions']; ?></div>
+                                <div class="value"><?php echo htmlspecialchars((string)$current_plan['dimensions']); ?></div>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Features -->
-                <?php if (isset($current_plan['features']) && is_array($current_plan['features'])): ?>
+                <?php if (!empty($current_plan['features'])): ?>
                     <div class="block">
                         <h3 class="block-title">Key Features</h3>
                         <ul class="feature-list">
@@ -185,7 +230,7 @@ $discount = round((($current_plan['old_price'] - $current_plan['new_price']) / $
             <div class="tabs-body">
                 <div id="description" class="tab-content active">
                     <h3>Detailed Description</h3>
-                    <p><?php echo isset($current_plan['full_desc']) ? $current_plan['full_desc'] : $current_plan['desc']; ?></p>
+                    <p><?php echo nl2br(htmlspecialchars((string)$current_plan['full_desc'])); ?></p>
 
                     <h4 class="subhead">Plan Highlights</h4>
                     <div class="highlights">
@@ -193,28 +238,28 @@ $discount = round((($current_plan['old_price'] - $current_plan['new_price']) / $
                             <i class="fa-solid fa-home"></i>
                             <div>
                                 <div class="label">Style</div>
-                                <div class="value"><?php echo $current_plan['style']; ?></div>
+                                <div class="value"><?php echo htmlspecialchars((string)$current_plan['style']); ?></div>
                             </div>
                         </div>
                         <div class="highlight">
                             <i class="fa-solid fa-ruler"></i>
                             <div>
                                 <div class="label">Total Area</div>
-                                <div class="value"><?php echo $current_plan['sqm']; ?> m²</div>
+                                <div class="value"><?php echo htmlspecialchars((string)$current_plan['sqm']); ?> m²</div>
                             </div>
                         </div>
                         <div class="highlight">
                             <i class="fa-solid fa-layer-group"></i>
                             <div>
                                 <div class="label">Levels</div>
-                                <div class="value"><?php echo $current_plan['stories']; ?> <?php echo $current_plan['stories'] > 1 ? 'Levels' : 'Level'; ?></div>
+                                <div class="value"><?php echo (int)$current_plan['stories']; ?> <?php echo ((int)$current_plan['stories'] > 1) ? 'Levels' : 'Level'; ?></div>
                             </div>
                         </div>
                         <div class="highlight">
                             <i class="fa-solid fa-expand"></i>
                             <div>
                                 <div class="label">Plot Size</div>
-                                <div class="value"><?php echo $current_plan['dimensions']; ?></div>
+                                <div class="value"><?php echo htmlspecialchars((string)$current_plan['dimensions']); ?></div>
                             </div>
                         </div>
                     </div>
@@ -224,9 +269,9 @@ $discount = round((($current_plan['old_price'] - $current_plan['new_price']) / $
                     <h3>Floor Plan Layout</h3>
 
                     <div class="floor-wrap">
-                        <?php if (isset($current_plan['floor_plan'])): ?>
+                        <?php if (!empty($current_plan['floor_plan'])): ?>
                             <img
-                                src="<?php echo $current_plan['floor_plan']; ?>"
+                                src="<?php echo htmlspecialchars((string)$current_plan['floor_plan']); ?>"
                                 alt="Floor Plan for <?php echo htmlspecialchars($current_plan['name']); ?>"
                                 class="floor-img"
                                 loading="lazy"
@@ -303,23 +348,22 @@ $discount = round((($current_plan['old_price'] - $current_plan['new_price']) / $
             </div>
 
             <div class="plans-grid">
-                <?php
-                $related = getRelatedPlans($plans, $plan_id, 4);
-                foreach ($related as $plan):
-                ?>
+                <?php foreach ($related as $plan): ?>
                     <div class="plan-card">
                         <div class="plan-img">
-                            <img src="<?php echo $plan['img']; ?>" alt="<?php echo htmlspecialchars($plan['name']); ?>" loading="lazy">
+                            <img src="<?php echo htmlspecialchars($plan['img']); ?>" alt="<?php echo htmlspecialchars($plan['name']); ?>" loading="lazy">
                         </div>
                         <div class="plan-info">
-                            <h3><?php echo $plan['name']; ?></h3>
-                            <div class="plan-desc"><?php echo $plan['desc']; ?></div>
+                            <h3><?php echo htmlspecialchars($plan['name']); ?></h3>
+                            <div class="plan-desc"><?php echo htmlspecialchars($plan['short_desc']); ?></div>
                             <div class="plan-pricing">
-                                <span class="plan-old">R<?php echo number_format($plan['old_price'], 2); ?></span>
-                                <span class="plan-new">R<?php echo number_format($plan['new_price'], 2); ?></span>
+                                <?php if ((float)$plan['old_price'] > 0): ?>
+                                    <span class="plan-old">R<?php echo number_format((float)$plan['old_price'], 2); ?></span>
+                                <?php endif; ?>
+                                <span class="plan-new">R<?php echo number_format((float)$plan['new_price'], 2); ?></span>
                             </div>
                             <div class="plan-actions">
-                                <a href="plan_details.php?id=<?php echo $plan['id']; ?>" class="cta-btn">View Details</a>
+                                <a href="plan_details.php?id=<?php echo urlencode($plan['id']); ?>" class="cta-btn">View Details</a>
                             </div>
                         </div>
                     </div>
