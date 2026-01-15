@@ -1,4 +1,17 @@
-<?php include 'includes/header.php'; ?>
+<?php
+require_once 'includes/header.php';
+require_once 'backend/config/db.php';
+
+$stmt = $pdo->query("
+    SELECT id, name, img, short_desc, old_price, new_price
+    FROM plans
+    ORDER BY created_at DESC
+    LIMIT 6
+");
+
+$plans = $stmt->fetchAll();
+?>
+
 <main>
     <section class="hero-section container">
         <!-- ✅ Black overlay -->
@@ -12,66 +25,87 @@
     </section>
 
     <section id="about" class="info-section container">
+        <!-- <img src="images/about.png" alt="about image" width="50%"> -->
+        <div class="info-image"></div>
         <div class="info-content">
             <h2>About Us</h2>
-            <p>Founded in 2020 during the COVID-19 pandemic, Reflex Perspectives emerged as a forwardthinking multi-disciplinary firm with a vision to adapt and thrive in challenging times. Initially
-                focused on supply and delivery services to meet the heightened demand for essential goods
-                during the pandemic, we quickly recognized opportunities to expand our offerings into various
-                complementary sectors, including architecture, civil and mechanical engineering, automotive
-                repairs, construction, and cleaning services.</br></br>
-                Our mission at Reflex Perspectives is to enhance the quality of life and functionality within our
-                communities by integrating expertise and creativity into every project we undertake. Our diverse
-                team of professionals brings a wealth of knowledge and experience, allowing us to approach
-                challenges from multiple angles and provide comprehensive, tailored solutions for our clients.
-                In our automotive division, we offer a full suite of services to assist our clients with their vehicle
-                needs. This includes parts supply, diagnostic services, planned repairs, and support for
-                breakdowns, ensuring that our customers have access to reliable and efficient automotive
-                solutions. Our team is committed to providing high-quality service and expertise, so our clients
-                can feel confident about the safety and performance of their vehicles.</br></br>
-                In addition to our automotive services, we excel in architectural design and engineering, with a
-                strong emphasis on quality and sustainability. Our dedicated cleaning team works tirelessly to
-                leave every space we touch immaculate, promoting health and well-being for all, while our
-                construction professionals ensure that every project adheres to the highest standards of safety
-                and quality.
-        </div>
-        <div class="info-image">
-            <img src="images/about.png" alt="About Us">
-        </div>
+            <p></p>
+            Founded in 2020 during the COVID-19 pandemic, Reflex Perspectives emerged as a forwardthinking multi-disciplinary firm with a vision to adapt and thrive in challenging times. Initially
+            focused on supply and delivery services to meet the heightened demand for essential goods
+            during the pandemic, we quickly recognized opportunities to expand our offerings into various
+            complementary sectors, including architecture, civil and mechanical engineering, automotive
+            repairs, construction, and cleaning services.</br></br>
+            Our mission at Reflex Perspectives is to enhance the quality of life and functionality within our
+            communities by integrating expertise and creativity into every project we undertake. Our diverse
+            team of professionals brings a wealth of knowledge and experience, allowing us to approach
+            challenges from multiple angles and provide comprehensive, tailored solutions for our clients.
+            In our automotive division, we offer a full suite of services to assist our clients with their vehicle
+            needs. This includes parts supply, diagnostic services, planned repairs, and support for
+            breakdowns, ensuring that our customers have access to reliable and efficient automotive
+            solutions. Our team is committed to providing high-quality service and expertise, so our clients
+            can feel confident about the safety and performance of their vehicles.</br></br>
+            In addition to our automotive services, we excel in architectural design and engineering, with a
+            strong emphasis on quality and sustainability. Our dedicated cleaning team works tirelessly to
+            leave every space we touch immaculate, promoting health and well-being for all, while our
+            construction professionals ensure that every project adheres to the highest standards of safety
+            and quality.</p>
         </div>
     </section>
 
     <section id="plans" class="plans-section">
         <h2 class="plans-title">Featured Building Plans</h2>
+
         <div class="plans-grid">
-            <?php include 'plans.php';
-            foreach ($plans as $plan): ?>
+            <?php if (!$plans): ?>
+                <p>No plans available at the moment.</p>
+            <?php endif; ?>
+
+            <?php foreach ($plans as $plan): ?>
                 <div class="plan-card">
                     <div class="plan-img">
-                        <img src="<?php echo $plan['img']; ?>" alt="<?php echo htmlspecialchars($plan['name']); ?>">
+                        <img src="<?= htmlspecialchars($plan['img']) ?>"
+                            alt="<?= htmlspecialchars($plan['name']) ?>">
                     </div>
+
                     <div class="plan-info">
-                        <h3><?php echo $plan['name']; ?></h3>
-                        <div class="plan-desc"><?php echo $plan['desc']; ?></div>
-                        <div class="plan-pricing">
-                            <span class="plan-old">R<?php echo number_format($plan['old_price'], 2); ?></span>
-                            <span class="plan-new">R<?php echo number_format($plan['new_price'], 2); ?></span>
+                        <h3><?= htmlspecialchars($plan['name']) ?></h3>
+
+                        <div class="plan-desc">
+                            <?= htmlspecialchars($plan['short_desc']) ?>
                         </div>
+
+                        <div class="plan-pricing">
+                            <?php if ($plan['old_price'] > 0): ?>
+                                <span class="plan-old">
+                                    R<?= number_format($plan['old_price'], 2) ?>
+                                </span>
+                            <?php endif; ?>
+
+                            <span class="plan-new">
+                                R<?= number_format($plan['new_price'], 2) ?>
+                            </span>
+                        </div>
+
                         <div class="plan-actions">
-                            <a href="cart.php?add=<?php echo $plan['id']; ?>" class="cta-btn">Add to Cart</a>
-                            <a href="plan_details.php?id=<?php echo $plan['id']; ?>" class="details-link">View Details</a>
+                            <a href="backend/api/cart.php?action=add&id=<?= $plan['id'] ?>"
+                                class="cta-btn">
+                                Add to Cart
+                            </a>
+
+                            <a href="plan_details.php?id=<?= $plan['id'] ?>"
+                                class="details-link">
+                                View Details
+                            </a>
                         </div>
                     </div>
                 </div>
             <?php endforeach; ?>
         </div>
     </section>
-</main>
 
+</main>
 <style>
     .info-section {
-        padding: 48px;
-        margin-bottom: 32px;
-        box-shadow: 0 1px 6px rgba(20, 60, 111, 0.045);
         display: flex;
         flex-direction: row;
     }
@@ -82,16 +116,12 @@
 
     .info-image {
         flex: 1;
+        height: 700px;
         width: 100%;
-        height: 100%;
-        object-fit: cover;
+        margin-right: 10px;
+        background: url('images/about.png') center / cover no-repeat;
     }
 
-    .info-image img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
 
     .hero-section {
         background-image: url('images/cover.png');
