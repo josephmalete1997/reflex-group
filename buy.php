@@ -40,7 +40,7 @@ $plan = $plans[$selected];
             echo "<p style='color:green;'>Thank you, ".htmlspecialchars($_POST['name'])."! We will contact you at ".htmlspecialchars($_POST['email'])." to complete your purchase of the ".$plan['title'].".</p>";
         }
         ?>
-        <p><a href="index.php">&larr; Back to Home</a></p>
+        <p><a href="/">&larr; Back to Home</a></p>
     </div>
 </body>
 </html>

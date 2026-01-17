@@ -6,7 +6,7 @@ require_once 'backend/config/db.php';
 
 $plan_id = isset($_GET['id']) ? trim((string)$_GET['id']) : '';
 if ($plan_id === '') {
-    header('Location: index.php');
+    header('Location: index');
     exit;
 }
 
@@ -16,7 +16,7 @@ $stmt->execute([':id' => $plan_id]);
 $current_plan = $stmt->fetch();
 
 if (!$current_plan) {
-    header('Location: index.php');
+    header('Location: index');
     exit;
 }
 
@@ -60,9 +60,9 @@ $discount = ($old > 0 && $new < $old) ? (int)round((($old - $new) / $old) * 100)
     <!-- Breadcrumb -->
     <section class="container">
         <nav class="breadcrumb">
-            <a href="index.php">Home</a>
+            <a href="/">Home</a>
             <span class="sep"><i class="fa-solid fa-chevron-right"></i></span>
-            <a href="index.php#plans">Building Plans</a>
+            <a href="/#plans">Building Plans</a>
             <span class="sep"><i class="fa-solid fa-chevron-right"></i></span>
             <span class="current"><?php echo htmlspecialchars($current_plan['name']); ?></span>
         </nav>
@@ -129,10 +129,10 @@ $discount = ($old > 0 && $new < $old) ? (int)round((($old - $new) / $old) * 100)
                     </div>
 
                     <div class="cta-row">
-                        <a href="backend/api/cart.php?action=add&id=<?php echo urlencode($current_plan['id']); ?>" class="btn btn-primary">
+                        <a href="backend/api/cart?action=add&id=<?php echo urlencode($current_plan['id']); ?>" class="btn btn-primary">
                             <i class="fa-solid fa-cart-plus"></i> Add to Cart
                         </a>
-                        <a href="checkout.php?buy=<?php echo urlencode($current_plan['id']); ?>" class="btn btn-dark">
+                        <a href="checkout?buy=<?php echo urlencode($current_plan['id']); ?>" class="btn btn-dark">
                             <i class="fa-solid fa-bolt"></i> Buy Now
                         </a>
                         <button class="btn btn-ghost wishlist-btn" onclick="addToWishlist('<?php echo htmlspecialchars($current_plan['id']); ?>')">
@@ -363,7 +363,7 @@ $discount = ($old > 0 && $new < $old) ? (int)round((($old - $new) / $old) * 100)
                                 <span class="plan-new">R<?php echo number_format((float)$plan['new_price'], 2); ?></span>
                             </div>
                             <div class="plan-actions">
-                                <a href="plan_details.php?id=<?php echo urlencode($plan['id']); ?>" class="cta-btn">View Details</a>
+                                <a href="plan_details?id=<?php echo urlencode($plan['id']); ?>" class="cta-btn">View Details</a>
                             </div>
                         </div>
                     </div>

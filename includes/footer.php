@@ -2,7 +2,7 @@
     <div class="footer-flexcontainer container">
         <div class="footer-about">
             <div class="logo-footer">
-                <img src="images/logo-footer.png" alt="logo" height="64">
+                <img src="images/logo.png" alt="logo">
             </div>
             <h4>Reflex Perspectives (Pty) Ltd</h4>
             <p>"Uncovering Opportunities, Building Foundations"<br><span style="font-size:0.97em;">Architecture | Engineering | Supplies | Mechanical Services | Cleaning | Welding</span></p>
@@ -11,12 +11,12 @@
             <div class="footer-col">
                 <h5>Quick Links</h5>
                 <ul>
-                    <li><a href="index.php">Home</a></li>
-                    <li><a href="about.php">Company Profile</a></li>
-                    <li><a href="mission.php">Mission & Vision</a></li>
-                    <li><a href="objectives.php">Objectives</a></li>
-                    <li><a href="services.php">Services</a></li>
-                    <li><a href="contact.php">Contact</a></li>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="about">Company Profile</a></li>
+                    <li><a href="mission">Mission & Vision</a></li>
+                    <li><a href="objectives">Objectives</a></li>
+                    <li><a href="our_work">Services</a></li>
+                    <li><a href="contact">Contact</a></li>
                 </ul>
             </div>
             <div class="footer-col">

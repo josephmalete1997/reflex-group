@@ -87,12 +87,12 @@ $plans = $stmt->fetchAll();
                         </div>
 
                         <div class="plan-actions">
-                            <a href="backend/api/cart.php?action=add&id=<?= $plan['id'] ?>"
+                            <a href="backend/api/cart?action=add&id=<?= $plan['id'] ?>"
                                 class="cta-btn">
                                 Add to Cart
                             </a>
 
-                            <a href="plan_details.php?id=<?= $plan['id'] ?>"
+                            <a href="plan_details?id=<?= $plan['id'] ?>"
                                 class="details-link">
                                 View Details
                             </a>

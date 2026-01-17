@@ -11,11 +11,11 @@ if (isset($_GET['add'])) {
     if (!in_array($plan_id, $_SESSION['cart'])) {
         $_SESSION['cart'][] = $plan_id;
     }
-    header('Location: cart.php'); exit;
+    header('Location: cart'); exit;
 }
 if (isset($_GET['remove'])) {
     $_SESSION['cart'] = array_diff($_SESSION['cart'], [$_GET['remove']]);
-    header('Location: cart.php'); exit;
+    header('Location: cart'); exit;
 }
 
 $cart_plans = array_filter($plans, function($plan) { return in_array($plan['id'], $_SESSION['cart']); });
@@ -42,7 +42,7 @@ $total = array_sum(array_column($cart_plans, 'new_price'));
     <div class="cart-container">
         <h1 style="margin-bottom:25px">Your Cart</h1>
         <?php if (count($cart_plans)===0): ?>
-            <p>Your cart is empty! <a href="index.php">Go back</a> to add a plan.</p>
+            <p>Your cart is empty! <a href="./">Go back</a> to add a plan.</p>
         <?php else: ?>
         <?php foreach($cart_plans as $plan): ?>
             <div class="cart-plan">
@@ -66,7 +66,7 @@ $total = array_sum(array_column($cart_plans, 'new_price'));
         }
         ?>
         <?php endif; ?>
-        <p style="margin-top:28px"><a href="index.php">&larr; Continue shopping</a></p>
+        <p style="margin-top:28px"><a href="./">&larr; Continue shopping</a></p>
     </div>
 </body>
 </html>

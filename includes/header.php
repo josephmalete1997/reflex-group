@@ -29,13 +29,13 @@ $cartCount = isset($_SESSION['cart']) ? count($_SESSION['cart']) : 0;
 
     <nav class="menu" id="main-menu" aria-label="Main navigation">
       <ul>
-        <li><a href="index.php">Home</a></li>
-        <li><a href="services.php">Architecture | Engineering | Construction</a></li>
-        <li><a href="contact.php">Contact</a></li>
+        <li><a href="./">Home</a></li>
+        <li><a href="our_work">Architecture | Engineering | Construction</a></li>
+        <li><a href="contact">Contact</a></li>
       </ul>
     </nav>
 
-    <a href="cart.php" class="cart-link">
+    <a href="cart" class="cart-link">
       <i class="fa-solid fa-cart-shopping cart-icon"></i>
       <span class="cart-count"><?php echo $cartCount; ?></span>
     </a>
@@ -51,6 +51,7 @@ $cartCount = isset($_SESSION['cart']) ? count($_SESSION['cart']) : 0;
     font-size: 1.6rem;
     cursor: pointer;
     color: inherit;
+    margin-right:10px;
   }
 
   /* Mobile menu open state */
