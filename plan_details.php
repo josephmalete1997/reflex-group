@@ -129,13 +129,13 @@ $discount = ($old > 0 && $new < $old) ? (int)round((($old - $new) / $old) * 100)
                     </div>
 
                     <div class="cta-row">
-                        <a href="backend/api/cart?action=add&id=<?php echo urlencode($current_plan['id']); ?>" class="btn btn-primary">
+                        <a href="cart?add=<?php echo urlencode($current_plan['id']); ?>" class="btn btn-primary">
                             <i class="fa-solid fa-cart-plus"></i> Add to Cart
                         </a>
                         <a href="checkout?buy=<?php echo urlencode($current_plan['id']); ?>" class="btn btn-dark">
                             <i class="fa-solid fa-bolt"></i> Buy Now
                         </a>
-                        <button class="btn btn-ghost wishlist-btn" onclick="addToWishlist('<?php echo htmlspecialchars($current_plan['id']); ?>')">
+                        <button class="btn btn-ghost wishlist-btn" onclick="addToWishlist(event, '<?php echo htmlspecialchars($current_plan['id']); ?>')">
                             <i class="fa-regular fa-heart"></i>
                         </button>
                     </div>
@@ -181,7 +181,7 @@ $discount = ($old > 0 && $new < $old) ? (int)round((($old - $new) / $old) * 100)
                             <i class="fa-solid fa-ruler-combined"></i>
                             <div>
                                 <div class="label">Floor Area</div>
-                                <div class="value"><?php echo htmlspecialchars((string)$current_plan['sqm']); ?> m²</div>
+                                <div class="value"><?php echo htmlspecialchars((string)$current_plan['sqm']); ?> m2</div>
                             </div>
                         </div>
 
@@ -245,7 +245,7 @@ $discount = ($old > 0 && $new < $old) ? (int)round((($old - $new) / $old) * 100)
                             <i class="fa-solid fa-ruler"></i>
                             <div>
                                 <div class="label">Total Area</div>
-                                <div class="value"><?php echo htmlspecialchars((string)$current_plan['sqm']); ?> m²</div>
+                                <div class="value"><?php echo htmlspecialchars((string)$current_plan['sqm']); ?> m2</div>
                             </div>
                         </div>
                         <div class="highlight">
@@ -387,8 +387,8 @@ $discount = ($old > 0 && $new < $old) ? (int)round((($old - $new) / $old) * 100)
         evt.currentTarget.classList.add('active');
     }
 
-    function addToWishlist(planId) {
-        const btn = event.currentTarget;
+    function addToWishlist(evt, planId) {
+        const btn = evt.currentTarget;
         const icon = btn.querySelector('i');
         icon.classList.toggle('fa-regular');
         icon.classList.toggle('fa-solid');

@@ -1,5 +1,7 @@
 <?php
-session_start();
+if (session_status() !== PHP_SESSION_ACTIVE) {
+  session_start();
+}
 $cartCount = isset($_SESSION['cart']) ? count($_SESSION['cart']) : 0;
 ?>
 <!DOCTYPE html>
@@ -171,5 +173,4 @@ header.site-header .container{
     }
   });
 </script>
-
 

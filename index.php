@@ -14,7 +14,7 @@ $plans = $stmt->fetchAll();
 
 <main>
     <section class="hero-section container">
-        <!-- ✅ Black overlay -->
+        <!-- Black overlay -->
         <div class="hero-overlay"></div>
 
         <div class="hero-content">
@@ -87,12 +87,12 @@ $plans = $stmt->fetchAll();
                         </div>
 
                         <div class="plan-actions">
-                            <a href="backend/api/cart?action=add&id=<?= $plan['id'] ?>"
+                            <a href="cart?add=<?= urlencode((string)$plan['id']) ?>"
                                 class="cta-btn">
                                 Add to Cart
                             </a>
 
-                            <a href="plan_details?id=<?= $plan['id'] ?>"
+                            <a href="plan_details?id=<?= urlencode((string)$plan['id']) ?>"
                                 class="details-link">
                                 View Details
                             </a>
@@ -133,13 +133,13 @@ $plans = $stmt->fetchAll();
         padding: 8px 0 54px 0;
         text-align: center;
 
-        /* ✅ needed for overlay layering */
+        /* needed for overlay layering */
         position: relative;
         overflow: hidden;
         color: #fff;
     }
 
-    /* ✅ overlay */
+    /* overlay */
     .hero-overlay {
         position: absolute;
         inset: 0;
@@ -148,7 +148,7 @@ $plans = $stmt->fetchAll();
         z-index: 1;
     }
 
-    /* ✅ keep content above overlay */
+    /* keep content above overlay */
     .hero-content {
         position: relative;
         z-index: 2;
